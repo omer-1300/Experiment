@@ -27,4 +27,6 @@ jobs:
           php artisan migrate --force
           sudo chown -R www-data:www-data /var/www/experiment
           sudo chmod -R 775 /var/www/experiment/storage /var/www/experiment/bootstrap/cache
+
+          sudo systemctl reload php8.4-fpm
           sudo systemctl reload php8.4-fpm
