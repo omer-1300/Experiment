@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\ServicesController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');
+
+Route::get('/services', [ServicesController::class, 'index'])->name('services');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

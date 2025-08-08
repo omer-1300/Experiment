@@ -1,0 +1,30 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.PRIVATE_KEY }}
+        script: |
+          cd /var/www/experiment
+          git pull origin main
+          composer install --no-dev --optimize-autoloader
+          npm ci
+          npm run build
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+          php artisan migrate --force
+          sudo chown -R www-data:www-data /var/www/experiment
+          sudo chmod -R 775 /var/www/experiment/storage /var/www/experiment/bootstrap/cache
+          sudo systemctl reload php8.4-fpm
